@@ -428,7 +428,47 @@ print(sorted_by_lateness[['shipID', 'partID', 'days_late', 'is_late']].head(10))
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Question 1:
+> ascending=True: This sorts data in ascending order.
+> For numerical values, it means from smallest to largest (e.g., 1, 2, 3).
+> For alphabetical values, it means from A to Z (e.g., Apple, Banana, Cherry).
+> For dates, it means from earliest to latest (e.g., 2023-01-01, 2023-01-02).
+>
+>
+> ascending=False: This sorts data in descending order.
+> For numerical values, it means from largest to smallest (e.g., 3, 2, 1).
+> For alphabetical values, it means from Z to A (e.g., Cherry, Banana, Apple).
+> For dates, it means from latest to earliest (e.g., 2023-01-02, 2023-01-01).
+>
+>
+> To sort by multiple columns, such as first by is_late and then by days_late, you typically provide a list >of column names to the sorting function or method. The order of columns in this list determines the >priority of sorting. The first column in the list is the primary sort key, and subsequent columns are used >to break ties within the primary sort.
+>
+```{python}
+# Sort first by is_late (False first, then True), then by days_late
+sorted_shipments = (
+    clean_shipments
+    .sort_values(
+        by=['is_late', 'days_late'],
+        ascending=[True, False]  # is_late ascending (False first), days_late descending
+    )
+    .reset_index(drop=True)
+)
+```
+> First sort by is_late:
+> False (on-time) shipments come first
+> True (late) shipments come second
+> Then sort by days_late within each group:
+> For on-time shipments: most negative (earliest) first
+> For late shipments: most positive (latest) first
+
+
+> Answer to Question 2:
+> Using .reset_index(drop=True) after sorting a Pandas DataFrame serves to re-establish a default, sequential integer index while discarding the old, potentially non-sequential or non-numeric index.
+> Maintaining a Clean, Sequential Index: When a DataFrame is sorted, the original index labels remain >associated with their respective rows, even though the order of the rows changes. This can lead to a >non-sequential or jumbled index. reset_index() replaces this with a new, clean index starting from 0.
+> Facilitating Positional Indexing: A sequential integer index makes it easier to access rows by their >position using iloc, as the index directly corresponds to the row number.
+> Preventing Misleading Index Values: If the original index held no inherent meaning beyond identifying the >row's original position, retaining it after sorting can be misleading, as the index values no longer >reflect the current order of the data.
+> drop=True's Role: The drop=True argument is crucial here because it prevents the old index from being >added as a new column in the DataFrame. If drop=True were omitted, the old index would be converted into a >regular column, which is often not the desired behavior after sorting.
+
 
 ### 5. Aggregate: Summarizing Data
 
