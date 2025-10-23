@@ -218,7 +218,72 @@ What's wrong with the `lateStatement` assignment and how would you fix it?
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Question 1: 
+> - The `dtype` of the `actualShipDate` series is `datetime64[ns]`
+> - We can find out using various methods as follows:
+
+```{python}
+# Method 1: Using .dtype attribute
+print("actualShipDate dtype:", shipments_df['actualShipDate'].dtype)
+print("================================================")
+
+# Method 2: Using .dtypes (for the entire dataframe)
+print("All column dtypes:")
+print(shipments_df.dtypes)
+print("================================================")
+# Method 3: More detailed info with .info()
+print("Detailed dataframe info:")
+shipments_df.info()
+print("================================================")
+```
+> - It is important that both `actualShipDate` and `plannedShipDate` have the same data type for comparison operations to work correctly. Pandas will compare the dates as strings if they are not the same type and comparisons would be alphabetical rather than chronological.
+
+
+> Answer to Question 2:
+> When treated as strings, the comparison happens character by character.
+> "04-11-2025" is compared to "05-20-2024".
+> The first character 0 is the same.
+> The second character 4 is compared to 5.
+> Because 4 comes before 5 alphabetically, "04-11-2025" is considered "less than" "05-20-2024", which is wrong chronologically
+  
+```{python}
+from datetime import datetime
+# The dates as strings
+date_string_1 = "04-11-2025"
+date_string_2 = "05-20-2024"
+
+print(f"Comparing dates as strings:")
+print(f"'{date_string_1}' > '{date_string_2}' is {date_string_1 > date_string_2}")
+print(f"'{date_string_1}' < '{date_string_2}' is {date_string_1 < date_string_2}\n")
+
+# The format of our dates is MM-DD-YYYY
+date_format = "%m-%d-%Y"
+
+# Convert the strings to datetime objects
+date_object_1 = datetime.strptime(date_string_1, date_format)
+date_object_2 = datetime.strptime(date_string_2, date_format)
+
+print(f"Comparing dates as datetime objects:")
+print(f"'{date_string_1}' > '{date_string_2}' is {date_object_1 > date_object_2}")
+print(f"'{date_string_1}' < '{date_string_2}' is {date_object_1 < date_object_2}\n")
+
+```
+
+> Answer to Question 3:
+> - lamdba-df was missing to reference the dataframe
+- lateStatement is a string, not a boolean so we need use vectorized operations to create the string like np.where()
+
+```{python}
+#This is the corrected code
+shipments_with_lateness = (
+    shipments_df
+    .assign(
+        is_late=lambda df: df['actualShipDate'] > df['plannedShipDate'],
+        days_late=lambda df: (df['actualShipDate'] - df['plannedShipDate']).dt.days,
+        lateStatement=lambda df: np.where(df['is_late'], "Darn Shipment is Late", "Shipment is on Time")
+    )
+)
+```
 
 ### 2. Subset: Querying Rows and Filtering Columns
 
@@ -263,8 +328,25 @@ print(late_shipments.head())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Question 1:
+> In pandas, df[df['is_late'] == True] uses boolean indexing, while df.query('is_late == True') uses the .query() method. While they can produce the same result for simple cases, they operate differently and have trade-offs in terms of readability, performance, and flexibility. 
+> The .query() method is more readable and allows for more complex queries using SQL-like syntax.
+> 
+> Answer to Question 2:
+> ```{python}
+> #Set the late threshold
+> late_threshold = 5
+>
+> #Query the shipments that are at least 5 days late using the late_threshold variable
+> late_shipments = (
+>    shipments_with_lateness
+>    .query('days_late >= @late_threshold')
+>    .filter(['shipID', 'partID', 'plannedShipDate', 'actualShipDate', 'days_late'])
+>)
+> print(f"Found {len(late_shipments)} shipments that are at least {late_threshold} days late out of {len(shipments_with_lateness)} total")
 
+> ```
+ 
 ### 3. Drop: Removing Unwanted Data
 
 **Mental Model:** Remove columns or rows you don't need.
@@ -301,7 +383,14 @@ print("Remaining columns:", clean_shipments.columns.tolist())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Question 1:
+> - `.drop(columns=['quantity'])` removes that specific column from the dataframe. You would choose to drop columns if you don't need them for your analysis.
+> `.filter()` explicitly specifies the columns you want to retain. You would create a new DataFrame by selecting only the columns present in your list.
+>
+> Answer to Question 2:
+> - If you use `.dropna()` without specifying `subset`, it will remove all rows with any missing values in any column.
+> - This is different from `.dropna(subset=['plannedShipDate', 'actualShipDate'])` which will only remove rows with missing values in the `plannedShipDate` and `actualShipDate` columns.
+> - You might want to be selective about which columns to check for missing values if you have a lot of columns and you only want to check a few of them.
 
 ### 4. Sort: Arranging Data
 
