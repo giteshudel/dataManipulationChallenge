@@ -453,6 +453,10 @@ sorted_shipments = (
     )
     .reset_index(drop=True)
 )
+
+
+print("Shipments sorted by first is_late and then by days_late :")
+print(sorted_shipments[['shipID', 'partID', 'days_late', 'is_late']].head(50))
 ```
 > First sort by is_late:
 > False (on-time) shipments come first
@@ -508,7 +512,9 @@ print(f"\nOn-time delivery rate: {on_time_rate:.1f}%")
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Q1:
+> In Pandas, the sum() works on boolean values because bool is a subclass of int in Python. This means that True is treated as 1 and False is treated as 0 when numerical operations are performed.
+> When we call sum() on a Series or DataFrame column containing boolean values, it effectively counts the number of True values present. Each True value contributes 1 to the sum, while each False value contributes 0.
 
 ### 6. Merge: Combining Information
 
@@ -547,7 +553,43 @@ print(shipments_with_category['prodCategory'].value_counts())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Q1:
+> Using how='left' in .merge() is often preferred because it guarantees that all rows from the "left" DataFrame are preserved in the merged result. how='left' is a common and safe default when the goal is to add information to an existing, primary dataset without losing any of its original records. This is crucial in many data analysis scenarios for several reasons:
+> Data Integrity: It ensures that no data from your primary (left) DataFrame is accidentally dropped due to a lack of matching keys in the "right" DataFrame. This helps maintain the integrity of your original dataset.
+> Adding Contextual Information: When you want to enrich an existing dataset with additional information from another source, a left merge allows you to add those details without losing any of your original observations. If a match isn't found in the right DataFrame, the corresponding columns will simply be filled with NaN values, indicating the absence of that specific information for those rows.
+> Predictability and Control: Left merges offer more predictable behavior regarding the number of rows in the output. The resulting DataFrame will always contain at least as many rows as the left DataFrame.
+> Debugging and Traceability: If you need to investigate why certain rows lack information after a merge, the NaN values resulting from a left merge clearly indicate which rows did not find a match in the right DataFrame. This makes debugging and understanding your data easier.
+
+> To check if any shipment were lost during the merge, we can verify the using various ways such as :
+>   - Compare before / after row counts.
+    - Check for any rows with missing values.
+    - Check for any rows having duplicate values.
+
+> Here is an example code for Comparing row counts:
+```{python}
+# Check row counts before and after merge
+print(f"Original shipments: {len(clean_shipments)}")
+print(f"After merge: {len(shipments_with_category)}")
+print(f"Difference: {len(shipments_with_category) - len(clean_shipments)}")
+
+# Verify no data loss
+if len(shipments_with_category) == len(clean_shipments):
+    print("No shipments lost during merge")
+else:
+    print("Data loss detected!")
+```
+
+> Answer to Q2:
+> If there are duplicate `partID` values in the `product_line_df`, we can run into data integrity issues. In his scenario, merge will create multple rows for each shipment that matches those duplicate partIDs. Here is an example:
+> product_line_df has :
+> partID   | productLine   | productCategory
+> part123   | Line1         | Machines
+> part123   | Line2         | Liquids       #Duplicate partID
+>
+> While merging with shipments_df:
+>  Each shipment with partID "part123" will get BOTH rows.
+>  As a Result, 1 shipment becomes 2 rows in the merged data.
+
 
 ### 7. Split-Apply-Combine: Group Analysis
 
