@@ -629,7 +629,27 @@ print(service_by_category)
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+> Answer to Q1:
+> In pandas, groupby combines "split-apply-combine" process into one with the help of .agg().
+> Just `.groupby('prodCategory')` will create a GroupBy object that contains instructions for how to split the data based on a 'productCategory'. The groupby operation then creates separate data chunks for each unique value in grouping column `productCategory`.
+> You need .agg() after grouping to perform specific calculations (like sum, mean, max) on each group, reducing the data to a summarized, single row per group. It allows you to apply one or more aggregation functions to a DataFrame, making it much easier to summarize and analyze data. Without an aggregation function, the grouping operation itself would not produce a useful, summarized result.
+> If you group a DataFrame but do not specify an aggregation, you are left with a "GroupBy object," which is not the final result you typically want. This object is an intermediate step in the "split-apply-combine" process, and you must apply an aggregation function (like .agg(), .sum(), or .mean()) to the "apply" and "combine" those results into a meaningful output. 
+
+> Answer to Q2:
+> | Group by `'prodCategory'` alone | Group by `['shipID', 'prodCategory']` |
+    | Can help defining service metrics aggregated 
+
+Grouping by 'prodCategory' alone:
+Question: "What is the overall service level for each product category?"
+Answer: Service metrics aggregated across ALL shipments for each category
+How many total shipments in each category?
+What percentage of shipments are late in each category?
+Average and maximum lateness by category
+Grouping by ['shipID', 'prodCategory']:
+Question: "What is the service level for each shipment within each product category?"
+Answer: Service metrics for each individual shipment within each category
+Each row represents one shipment's performance in one category
+Shows which specific shipments had issues in which categories
 
 ## Answering A Business Question
 
