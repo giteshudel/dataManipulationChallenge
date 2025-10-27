@@ -218,9 +218,10 @@ What's wrong with the `lateStatement` assignment and how would you fix it?
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Question 1: 
-> - The `dtype` of the `actualShipDate` series is `datetime64[ns]`
-> - We can find out using various methods as follows:
+**Answer to Question 1:**
+
+ - The `dtype` of the `actualShipDate` series is `datetime64[ns]`
+ - We can find out using various methods as follows:
 
 ```{python}
 # Method 1: Using .dtype attribute
@@ -236,15 +237,18 @@ print("Detailed dataframe info:")
 shipments_df.info()
 print("================================================")
 ```
-> - It is important that both `actualShipDate` and `plannedShipDate` have the same data type for comparison operations to work correctly. Pandas will compare the dates as strings if they are not the same type and comparisons would be alphabetical rather than chronological.
+
+- It is important that both `actualShipDate` and `plannedShipDate` have the same data type for comparison operations to work correctly. Pandas will compare the dates as strings if they are not the same type and comparisons would be alphabetical rather than chronological.
 
 
-> Answer to Question 2:
-> When treated as strings, the comparison happens character by character.
-> "04-11-2025" is compared to "05-20-2024".
-> The first character 0 is the same.
-> The second character 4 is compared to 5.
-> Because 4 comes before 5 alphabetically, "04-11-2025" is considered "less than" "05-20-2024", which is wrong chronologically
+**Answer to Question 2:**
+
+When treated as strings, the comparison happens character by character.
+
+    - "04-11-2025" is compared to "05-20-2024".
+    - The first character 0 is the same.
+    - The second character 4 is compared to 5.
+    - Because 4 comes before 5 alphabetically, "04-11-2025" is considered "less than" "05-20-2024", which is wrong chronologically
   
 ```{python}
 from datetime import datetime
@@ -269,8 +273,9 @@ print(f"'{date_string_1}' < '{date_string_2}' is {date_object_1 < date_object_2}
 
 ```
 
-> Answer to Question 3:
-> - lamdba-df was missing to reference the dataframe
+**Answer to Question 3:**
+
+- lamdba-df was missing to reference the dataframe
 - lateStatement is a string, not a boolean so we need use vectorized operations to create the string like np.where()
 
 ```{python}
@@ -328,24 +333,27 @@ print(late_shipments.head())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Question 1:
-> In pandas, df[df['is_late'] == True] uses boolean indexing, while df.query('is_late == True') uses the .query() method. While they can produce the same result for simple cases, they operate differently and have trade-offs in terms of readability, performance, and flexibility. 
-> The .query() method is more readable and allows for more complex queries using SQL-like syntax.
-> 
-> Answer to Question 2:
-> ```{python}
-> #Set the late threshold
-> late_threshold = 5
->
-> #Query the shipments that are at least 5 days late using the late_threshold variable
-> late_shipments = (
->    shipments_with_lateness
->    .query('days_late >= @late_threshold')
->    .filter(['shipID', 'partID', 'plannedShipDate', 'actualShipDate', 'days_late'])
->)
-> print(f"Found {len(late_shipments)} shipments that are at least {late_threshold} days late out of {len(shipments_with_lateness)} total")
+**Answer to Question 1:**
 
-> ```
+- In pandas, df[df['is_late'] == True] uses boolean indexing, while df.query('is_late == True') uses the .query() method. While they can produce the same result for simple cases, they operate differently and have trade-offs in terms of readability, performance, and flexibility. 
+- The .query() method is more readable and allows for more complex queries using SQL-like syntax.
+
+
+**Answer to Question 2:**
+
+```{python}
+#Set the late threshold
+late_threshold = 5
+
+#Query the shipments that are at least 5 days late using the late_threshold variable
+late_shipments = (
+   shipments_with_lateness
+   .query('days_late >= @late_threshold')
+   .filter(['shipID', 'partID', 'plannedShipDate', 'actualShipDate', 'days_late'])
+)
+print(f"Found {len(late_shipments)} shipments that are at least {late_threshold} days late out of {len(shipments_with_lateness)} total")
+```
+
  
 ### 3. Drop: Removing Unwanted Data
 
@@ -383,14 +391,17 @@ print("Remaining columns:", clean_shipments.columns.tolist())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Question 1:
-> - `.drop(columns=['quantity'])` removes that specific column from the dataframe. You would choose to drop columns if you don't need them for your analysis.
-> `.filter()` explicitly specifies the columns you want to retain. You would create a new DataFrame by selecting only the columns present in your list.
->
-> Answer to Question 2:
-> - If you use `.dropna()` without specifying `subset`, it will remove all rows with any missing values in any column.
-> - This is different from `.dropna(subset=['plannedShipDate', 'actualShipDate'])` which will only remove rows with missing values in the `plannedShipDate` and `actualShipDate` columns.
-> - You might want to be selective about which columns to check for missing values if you have a lot of columns and you only want to check a few of them.
+**Answer to Question 1:**
+
+- `.drop(columns=['quantity'])` removes that specific column from the dataframe. You would choose to drop columns if you don't need them for your analysis.
+
+- `.filter()` explicitly specifies the columns you want to retain. You would create a new DataFrame by selecting only the columns present in your list.
+
+**Answer to Question 2:**
+
+- If you use `.dropna()` without specifying `subset`, it will remove all rows with any missing values in any column.
+- This is different from `.dropna(subset=['plannedShipDate', 'actualShipDate'])` which will only remove rows with missing values in the `plannedShipDate` and `actualShipDate` columns.
+- You might want to be selective about which columns to check for missing values if you have a lot of columns and you only want to check a few of them.
 
 ### 4. Sort: Arranging Data
 
@@ -428,21 +439,25 @@ print(sorted_by_lateness[['shipID', 'partID', 'days_late', 'is_late']].head(10))
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Question 1:
-> ascending=True: This sorts data in ascending order.
-> For numerical values, it means from smallest to largest (e.g., 1, 2, 3).
-> For alphabetical values, it means from A to Z (e.g., Apple, Banana, Cherry).
-> For dates, it means from earliest to latest (e.g., 2023-01-01, 2023-01-02).
->
->
-> ascending=False: This sorts data in descending order.
-> For numerical values, it means from largest to smallest (e.g., 3, 2, 1).
-> For alphabetical values, it means from Z to A (e.g., Cherry, Banana, Apple).
-> For dates, it means from latest to earliest (e.g., 2023-01-02, 2023-01-01).
->
->
-> To sort by multiple columns, such as first by is_late and then by days_late, you typically provide a list >of column names to the sorting function or method. The order of columns in this list determines the >priority of sorting. The first column in the list is the primary sort key, and subsequent columns are used >to break ties within the primary sort.
->
+**Answer to Question 1:**
+
+- ascending=True: 
+    - This sorts data in ascending order.
+    - For numerical values, it means from smallest to largest (e.g., 1, 2, 3).
+    - For alphabetical values, it means from A to Z (e.g., Apple, Banana, Cherry).
+    - For dates, it means from earliest to latest (e.g., 2023-01-01, 2023-01-02).
+
+
+- ascending=False: 
+    - This sorts data in descending order.
+    - For numerical values, it means from largest to smallest (e.g., 3, 2, 1).
+    - For alphabetical values, it means from Z to A (e.g., Cherry, Banana, Apple).
+    - For dates, it means from latest to earliest (e.g., 2023-01-02, 2023-01-01).
+
+
+- To sort by multiple columns, such as first by is_late and then by days_late, you typically provide a list of column names to the sorting function or method. The order of columns in this list determines the priority of sorting. The first column in the list is the primary sort key, and subsequent columns are used to break ties within the primary sort.
+
+
 ```{python}
 # Sort first by is_late (False first, then True), then by days_late
 sorted_shipments = (
@@ -458,20 +473,26 @@ sorted_shipments = (
 print("Shipments sorted by first is_late and then by days_late :")
 print(sorted_shipments[['shipID', 'partID', 'days_late', 'is_late']].head(50))
 ```
-> First sort by is_late:
-> False (on-time) shipments come first
-> True (late) shipments come second
-> Then sort by days_late within each group:
-> For on-time shipments: most negative (earliest) first
-> For late shipments: most positive (latest) first
+
+First sort by is_late:
+
+ - False (on-time) shipments come first
+ - True (late) shipments come second
 
 
-> Answer to Question 2:
-> Using .reset_index(drop=True) after sorting a Pandas DataFrame serves to re-establish a default, sequential integer index while discarding the old, potentially non-sequential or non-numeric index.
-> Maintaining a Clean, Sequential Index: When a DataFrame is sorted, the original index labels remain >associated with their respective rows, even though the order of the rows changes. This can lead to a >non-sequential or jumbled index. reset_index() replaces this with a new, clean index starting from 0.
-> Facilitating Positional Indexing: A sequential integer index makes it easier to access rows by their >position using iloc, as the index directly corresponds to the row number.
-> Preventing Misleading Index Values: If the original index held no inherent meaning beyond identifying the >row's original position, retaining it after sorting can be misleading, as the index values no longer >reflect the current order of the data.
-> drop=True's Role: The drop=True argument is crucial here because it prevents the old index from being >added as a new column in the DataFrame. If drop=True were omitted, the old index would be converted into a >regular column, which is often not the desired behavior after sorting.
+Then sort by days_late within each group:
+
+ - For on-time shipments: most negative (earliest) first
+ - For late shipments: most positive (latest) first
+
+
+**Answer to Question 2:**
+
+- Using .reset_index(drop=True) after sorting a Pandas DataFrame serves to re-establish a default, sequential integer index while discarding the old, potentially non-sequential or non-numeric index.
+- Maintaining a Clean, Sequential Index: When a DataFrame is sorted, the original index labels remain associated with their respective rows, even though the order of the rows changes. This can lead to a non-sequential or jumbled index. reset_index() replaces this with a new, clean index starting from 0.
+- Facilitating Positional Indexing: A sequential integer index makes it easier to access rows by their position using iloc, as the index directly corresponds to the row number.
+- Preventing Misleading Index Values: If the original index held no inherent meaning beyond identifying the row's original position, retaining it after sorting can be misleading, as the index values no longer reflect the current order of the data.
+- drop=True's Role: The drop=True argument is crucial here because it prevents the old index from being added as a new column in the DataFrame. If drop=True were omitted, the old index would be converted into a regular column, which is often not the desired behavior after sorting.
 
 
 ### 5. Aggregate: Summarizing Data
@@ -512,9 +533,10 @@ print(f"\nOn-time delivery rate: {on_time_rate:.1f}%")
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Q1:
-> In Pandas, the sum() works on boolean values because bool is a subclass of int in Python. This means that True is treated as 1 and False is treated as 0 when numerical operations are performed.
-> When we call sum() on a Series or DataFrame column containing boolean values, it effectively counts the number of True values present. Each True value contributes 1 to the sum, while each False value contributes 0.
+**Answer to Q1:**
+
+- In Pandas, the sum() works on boolean values because bool is a subclass of int in Python. This means that True is treated as 1 and False is treated as 0 when numerical operations are performed.
+- When we call sum() on a Series or DataFrame column containing boolean values, it effectively counts the number of True values present. Each True value contributes 1 to the sum, while each False value contributes 0.
 
 ### 6. Merge: Combining Information
 
@@ -553,19 +575,21 @@ print(shipments_with_category['prodCategory'].value_counts())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Q1:
-> Using how='left' in .merge() is often preferred because it guarantees that all rows from the "left" DataFrame are preserved in the merged result. how='left' is a common and safe default when the goal is to add information to an existing, primary dataset without losing any of its original records. This is crucial in many data analysis scenarios for several reasons:
-> Data Integrity: It ensures that no data from your primary (left) DataFrame is accidentally dropped due to a lack of matching keys in the "right" DataFrame. This helps maintain the integrity of your original dataset.
-> Adding Contextual Information: When you want to enrich an existing dataset with additional information from another source, a left merge allows you to add those details without losing any of your original observations. If a match isn't found in the right DataFrame, the corresponding columns will simply be filled with NaN values, indicating the absence of that specific information for those rows.
-> Predictability and Control: Left merges offer more predictable behavior regarding the number of rows in the output. The resulting DataFrame will always contain at least as many rows as the left DataFrame.
-> Debugging and Traceability: If you need to investigate why certain rows lack information after a merge, the NaN values resulting from a left merge clearly indicate which rows did not find a match in the right DataFrame. This makes debugging and understanding your data easier.
+**Answer to Q1:**
 
-> To check if any shipment were lost during the merge, we can verify the using various ways such as :
->   - Compare before / after row counts.
-    - Check for any rows with missing values.
+- Using how='left' in .merge() is often preferred because it guarantees that all rows from the "left" DataFrame are preserved in the merged result. how='left' is a common and safe default when the goal is to add information to an existing, primary dataset without losing any of its original records. 
+This is crucial in many data analysis scenarios for several reasons:
+    - Data Integrity: It ensures that no data from your primary (left) DataFrame is accidentally dropped due to a lack of matching keys in the "right" DataFrame. This helps maintain the integrity of your original dataset.
+    - Adding Contextual Information: When you want to enrich an existing dataset with additional information from another source, a left merge allows you to add those details without losing any of your original observations. If a match isn't found in the right DataFrame, the corresponding columns will simply be filled with NaN values, indicating the absence of that specific information for those rows.
+    - Predictability and Control: Left merges offer more predictable behavior regarding the number of rows in the output. The resulting DataFrame will always contain at least as many rows as the left DataFrame.
+    - Debugging and Traceability: If you need to investigate why certain rows lack information after a merge, the NaN values resulting from a left merge clearly indicate which rows did not find a match in the right DataFrame. This makes debugging and understanding your data easier.
+
+To check if any shipment were lost during the merge, we can verify the using various ways such as :
+
+    - Compare before / after row counts.- Check for any rows with missing values.
     - Check for any rows having duplicate values.
 
-> Here is an example code for Comparing row counts:
+Here is an example code for Comparing row counts:
 ```{python}
 # Check row counts before and after merge
 print(f"Original shipments: {len(clean_shipments)}")
@@ -579,16 +603,24 @@ else:
     print("Data loss detected!")
 ```
 
-> Answer to Q2:
-> If there are duplicate `partID` values in the `product_line_df`, we can run into data integrity issues. In his scenario, merge will create multple rows for each shipment that matches those duplicate partIDs. Here is an example:
-> product_line_df has :
-> partID   | productLine   | productCategory
-> part123   | Line1         | Machines
-> part123   | Line2         | Liquids       #Duplicate partID
->
-> While merging with shipments_df:
->  Each shipment with partID "part123" will get BOTH rows.
->  As a Result, 1 shipment becomes 2 rows in the merged data.
+**Answer to Q2:**
+
+If there are duplicate `partID` values in the `product_line_df`, we can run into data integrity issues. In his scenario, merge will create multple rows for each shipment that matches those duplicate partIDs. 
+
+Here is an example:
+
+- product_line_df has :
+
+    | partID   | productLine   | productCategory
+
+    | part123   | Line1         | Machines
+
+    | part123   | Line2         | Liquids       #Duplicate partID
+
+- While merging with shipments_df:
+
+    Each shipment with partID "part123" will get BOTH rows.
+    As a Result, 1 shipment becomes 2 rows in the merged data.
 
 
 ### 7. Split-Apply-Combine: Group Analysis
@@ -629,27 +661,28 @@ print(service_by_category)
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Answer to Q1:
-> In pandas, groupby combines "split-apply-combine" process into one with the help of .agg().
-> Just `.groupby('prodCategory')` will create a GroupBy object that contains instructions for how to split the data based on a 'productCategory'. The groupby operation then creates separate data chunks for each unique value in grouping column `productCategory`.
-> You need .agg() after grouping to perform specific calculations (like sum, mean, max) on each group, reducing the data to a summarized, single row per group. It allows you to apply one or more aggregation functions to a DataFrame, making it much easier to summarize and analyze data. Without an aggregation function, the grouping operation itself would not produce a useful, summarized result.
-> If you group a DataFrame but do not specify an aggregation, you are left with a "GroupBy object," which is not the final result you typically want. This object is an intermediate step in the "split-apply-combine" process, and you must apply an aggregation function (like .agg(), .sum(), or .mean()) to the "apply" and "combine" those results into a meaningful output. 
+**Answer to Q1:**
 
-> Answer to Q2:
-> | Group by `'prodCategory'` alone | Group by `['shipID', 'prodCategory']` |
-    | Can help defining service metrics aggregated 
+- In pandas, groupby combines "split-apply-combine" process into one with the help of .agg().
+- Just `.groupby('prodCategory')` will create a GroupBy object that contains instructions for how to split the data based on a 'productCategory'. The groupby operation then creates separate data chunks for each unique value in grouping column `productCategory`.
+- You need .agg() after grouping to perform specific calculations (like sum, mean, max) on each group, reducing the data to a summarized, single row per group. It allows you to apply one or more aggregation functions to a DataFrame, making it much easier to summarize and analyze data. Without an aggregation function, the grouping operation itself would not produce a useful, summarized result.
+- If you group a DataFrame but do not specify an aggregation, you are left with a "GroupBy object," which is not the final result you typically want. This object is an intermediate step in the "split-apply-combine" process, and you must apply an aggregation function (like .agg(), .sum(), or .mean()) to the "apply" and "combine" those results into a meaningful output. 
 
-Grouping by 'prodCategory' alone:
-Question: "What is the overall service level for each product category?"
-Answer: Service metrics aggregated across ALL shipments for each category
-How many total shipments in each category?
-What percentage of shipments are late in each category?
-Average and maximum lateness by category
-Grouping by ['shipID', 'prodCategory']:
-Question: "What is the service level for each shipment within each product category?"
-Answer: Service metrics for each individual shipment within each category
-Each row represents one shipment's performance in one category
-Shows which specific shipments had issues in which categories
+**Answer to Q2:**
+
+    Grouping by 'prodCategory' alone:
+
+        - Question: "What is the overall service level for each product category?"
+        - Answer: Service metrics aggregated across ALL shipments for each category
+        - How many total shipments in each category?
+        - What percentage of shipments are late in each category?
+        - Average and maximum lateness by category
+
+    Grouping by ['shipID', 'prodCategory']:
+        - Question: "What is the service level for each shipment within each product category?"
+        - Answer: Service metrics for each individual shipment within each category
+        - Each row represents one shipment's performance in one category
+        - Shows which specific shipments had issues in which categories
 
 ## Answering A Business Question
 
@@ -693,7 +726,30 @@ print(f"Percentage with multiple categories: {multi_category_shipments['shipID']
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+**Answer to Q1:**
+
+The Business Question This Comprehensive Analysis Answers Primary Question: 
+
+- "How often do our customers place orders that span multiple product categories, and what are the operational implications of these cross-category orders?"
+- Grouping by `['shipID', 'prodCategory']` creates one row per shipmentID-prodcutCategory combination as compared to just producCatgory which would have created one row each per category only.
+- It then idenifies shipments that contain products from more than one category.
+- Finally, shows what amount of all shipments are multi=category as percentage.
+
+Business insights ZappTech's management can know from percentage of multi-category shipments:
+
+- Cross-Category Shopping behavior: 232 out of 997 (23.3%) contain multiple productCategories. This tells about customer ordering pattrns.
+
+    Business Question: "Do our customers typically order from one category at a time, or do they frequently mix categories in single orders?"
+
+- Operational Complexity
+
+    Business Question: "What percentage of our shipments require coordination across multiple product lines, and how does this affect our fulfillment process?"
+
+- Service Level Impact
+
+    Business Question: "Are multi-category orders more likely to experience delays due to the complexity of coordinating different product lines?"
+
+
 
 ## Student Analysis Section: Mastering Data Manipulation {#student-analysis-section}
 
